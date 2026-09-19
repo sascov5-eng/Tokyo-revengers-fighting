@@ -15,13 +15,18 @@ final class GameViewController: UIViewController {
         guard let skView = view as? SKView else { return }
         skView.ignoresSiblingOrder = true
         skView.isMultipleTouchEnabled = true
-        #if DEBUG
-        skView.showsFPS = true
-        skView.showsNodeCount = true
-        #endif
+        skView.preferredFramesPerSecond = 60
+    }
 
-        let scene = MenuScene(size: CGSize(width: 390, height: 844))
-        scene.scaleMode = .aspectFill
-        skView.presentScene(scene)
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        guard let skView = view as? SKView, skView.bounds.width > 1 else { return }
+        if skView.scene == nil {
+            let scene = MenuScene(size: skView.bounds.size)
+            scene.scaleMode = .resizeFill
+            skView.presentScene(scene)
+        } else if skView.scene!.size != skView.bounds.size {
+            skView.scene!.size = skView.bounds.size
+        }
     }
 }
