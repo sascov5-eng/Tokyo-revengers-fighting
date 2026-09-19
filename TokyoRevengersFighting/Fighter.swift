@@ -22,9 +22,7 @@ final class Fighter: SKNode {
     private var kickCool: TimeInterval = 0
     private var struckThisMove = false
 
-    private let body: SKShapeNode
-    private let head: SKShapeNode
-    private let hair: SKShapeNode
+    private let sprite: SKSpriteNode
     private let label: SKLabelNode
 
     var intentMove: CGFloat = 0
@@ -49,30 +47,21 @@ final class Fighter: SKNode {
     init(profile: FighterProfile) {
         self.profile = profile
         self.hp = profile.maxHP
-        body = SKShapeNode(rectOf: CGSize(width: profile.width, height: profile.height * 0.62), cornerRadius: 8)
-        body.fillColor = profile.bodyColor
-        body.strokeColor = profile.accentColor
-        body.lineWidth = 2
-        body.position = CGPoint(x: 0, y: profile.height * 0.38)
-        head = SKShapeNode(circleOfRadius: 16)
-        head.fillColor = SKColor(red: 0.96, green: 0.84, blue: 0.72, alpha: 1)
-        head.strokeColor = .clear
-        head.position = CGPoint(x: 0, y: profile.height * 0.78)
-        hair = SKShapeNode(rectOf: CGSize(width: 34, height: 16), cornerRadius: 6)
-        hair.fillColor = profile.hairColor
-        hair.strokeColor = .clear
-        hair.position = CGPoint(x: 0, y: profile.height * 0.88)
+        sprite = SKSpriteNode(texture: SpriteBank.texture("\(profile.id)_idle"))
+        sprite.anchorPoint = CGPoint(x: 0.5, y: 0)
+        sprite.size = CGSize(width: profile.width * 1.85, height: profile.height * 1.45)
+        sprite.position = .zero
+        sprite.zPosition = 2
         label = SKLabelNode(fontNamed: "HelveticaNeue-Bold")
         label.text = profile.name
         label.fontSize = 11
         label.fontColor = .white
         label.verticalAlignmentMode = .center
-        label.position = CGPoint(x: 0, y: profile.height + 16)
+        label.position = CGPoint(x: 0, y: profile.height + 18)
         super.init()
-        addChild(body)
-        addChild(head)
-        addChild(hair)
+        addChild(sprite)
         addChild(label)
+        applyPose()
     }
 
     required init?(coder: NSCoder) { nil }
@@ -92,9 +81,9 @@ final class Fighter: SKNode {
         kickCool = 0
         struckThisMove = false
         alpha = 1
-        body.fillColor = profile.bodyColor
         xScale = faceRight ? 1 : -1
         label.xScale = faceRight ? 1 : -1
+        applyPose()
     }
 
     func takeHit(damage: CGFloat, fromRight: Bool) {
@@ -113,6 +102,7 @@ final class Fighter: SKNode {
         velocity.dy = hp <= 0 ? 220 : 80
         onGround = false
         if state == .ko { alpha = 0.7 }
+        applyPose()
     }
 
     func update(dt: TimeInterval, groundY: CGFloat, minX: CGFloat, maxX: CGFloat, opponent: Fighter?) {
@@ -188,19 +178,9 @@ final class Fighter: SKNode {
             invuln = 0.70
             velocity.dx = facingRight ? -300 : 300
             hp = min(profile.maxHP, hp + 14)
-            flash(SKColor(red: 0.35, green: 0.65, blue: 1.0, alpha: 1))
         case .invincibleKick:
             velocity.dx = facingRight ? 420 : -420
-            flash(SKColor(red: 0.95, green: 0.85, blue: 0.20, alpha: 1))
         }
-    }
-
-    private func flash(_ color: SKColor) {
-        body.fillColor = color
-        let back = SKAction.run { [weak self] in
-            self?.body.fillColor = self?.profile.bodyColor ?? color
-        }
-        body.run(.sequence([.wait(forDuration: 0.18), back]))
     }
 
     private func resolveAttacks(against opponent: Fighter?) {
@@ -213,9 +193,7 @@ final class Fighter: SKNode {
         default: return
         }
         guard reach > 0 else { return }
-        let activeStart: TimeInterval = 0.06
-        let activeEnd: TimeInterval = min(0.28, attackLock + 0.12)
-        guard stateTime >= activeStart && stateTime <= activeEnd else { return }
+        guard stateTime >= 0.06 && stateTime <= min(0.28, attackLock + 0.12) else { return }
         let dir: CGFloat = facingRight ? 1 : -1
         let box = CGRect(x: position.x + dir * 8, y: position.y + 16, width: dir * reach, height: 56).standardized
         guard box.intersects(foe.hitbox) else { return }
@@ -247,9 +225,22 @@ final class Fighter: SKNode {
         if state != next {
             state = next
             stateTime = 0
-            if next == .idle || next == .walk || next == .block {
-                body.fillColor = profile.bodyColor
-            }
+            applyPose()
+        }
+    }
+
+    private func applyPose() {
+        let suffix: String
+        switch state {
+        case .punch: suffix = "punch"
+        case .kick: suffix = "kick"
+        case .block: suffix = "block"
+        case .special: suffix = "special"
+        case .hit, .ko: suffix = "block"
+        default: suffix = "idle"
+        }
+        if let t = SpriteBank.texture("\(profile.id)_\(suffix)") {
+            sprite.texture = t
         }
     }
 
