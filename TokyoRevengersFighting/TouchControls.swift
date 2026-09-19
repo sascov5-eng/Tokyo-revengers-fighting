@@ -9,7 +9,7 @@ final class TouchControls: SKNode {
     private let punchBtn: SKShapeNode
     private let kickBtn: SKShapeNode
     private let specialBtn: SKShapeNode
-    private var stickTouch: UITouch?
+    private var stickId: ObjectIdentifier?
     private var buttonTouches: [ObjectIdentifier: String] = [:]
     private(set) var moveX: CGFloat = 0
     private(set) var holdingBlock = false
@@ -54,8 +54,15 @@ final class TouchControls: SKNode {
 
     func layout(in size: CGSize, bottomInset: CGFloat) {
         let pad = 18 + max(bottomInset, 8)
+        let old = stickBase.position
         stickBase.position = CGPoint(x: 78, y: pad + 56)
-        stickKnob.position = stickBase.position
+        if stickId == nil {
+            stickKnob.position = stickBase.position
+            moveX = 0
+        } else {
+            stickKnob.position.x += stickBase.position.x - old.x
+            stickKnob.position.y += stickBase.position.y - old.y
+        }
         let right = size.width
         punchBtn.position = CGPoint(x: right - 156, y: pad + 40)
         kickBtn.position = CGPoint(x: right - 78, y: pad + 40)
@@ -75,30 +82,42 @@ final class TouchControls: SKNode {
         specialPressed = false
     }
 
+    func keepOnly(_ live: Set<ObjectIdentifier>) {
+        if let sid = stickId, !live.contains(sid) {
+            releaseStick()
+        }
+        buttonTouches = buttonTouches.filter { live.contains($0.key) }
+        holdingBlock = buttonTouches.values.contains("block")
+    }
+
+    func releaseStick() {
+        stickId = nil
+        moveX = 0
+        stickKnob.position = stickBase.position
+    }
+
     func touchBegan(_ touch: UITouch, at p: CGPoint) {
-        if stickTouch == nil && hypot(p.x - stickBase.position.x, p.y - stickBase.position.y) <= 72 {
-            stickTouch = touch
+        let id = ObjectIdentifier(touch)
+        if stickId == nil && hypot(p.x - stickBase.position.x, p.y - stickBase.position.y) <= 64 {
+            stickId = id
             updateStick(p)
             return
         }
-        if hit(jumpBtn, p, 42) { jumpPressed = true; buttonTouches[ObjectIdentifier(touch)] = "jump" }
-        else if hit(blockBtn, p, 42) { holdingBlock = true; buttonTouches[ObjectIdentifier(touch)] = "block" }
-        else if hit(punchBtn, p, 46) { punchPressed = true; buttonTouches[ObjectIdentifier(touch)] = "punch" }
-        else if hit(kickBtn, p, 46) { kickPressed = true; buttonTouches[ObjectIdentifier(touch)] = "kick" }
-        else if hit(specialBtn, p, 44) { specialPressed = true; buttonTouches[ObjectIdentifier(touch)] = "special" }
+        if hit(jumpBtn, p, 42) { jumpPressed = true; buttonTouches[id] = "jump" }
+        else if hit(blockBtn, p, 42) { holdingBlock = true; buttonTouches[id] = "block" }
+        else if hit(punchBtn, p, 46) { punchPressed = true; buttonTouches[id] = "punch" }
+        else if hit(kickBtn, p, 46) { kickPressed = true; buttonTouches[id] = "kick" }
+        else if hit(specialBtn, p, 44) { specialPressed = true; buttonTouches[id] = "special" }
     }
 
     func touchMoved(_ touch: UITouch, at p: CGPoint) {
-        if touch === stickTouch { updateStick(p) }
+        if ObjectIdentifier(touch) == stickId { updateStick(p) }
     }
 
     func touchEnded(_ touch: UITouch) {
-        if touch === stickTouch {
-            stickTouch = nil
-            moveX = 0
-            stickKnob.position = stickBase.position
-        }
-        if let kind = buttonTouches.removeValue(forKey: ObjectIdentifier(touch)), kind == "block" {
+        let id = ObjectIdentifier(touch)
+        if id == stickId { releaseStick() }
+        if let kind = buttonTouches.removeValue(forKey: id), kind == "block" {
             holdingBlock = buttonTouches.values.contains("block")
         }
     }
@@ -111,6 +130,7 @@ final class TouchControls: SKNode {
         var dx = p.x - stickBase.position.x
         let maxR: CGFloat = 46
         dx = max(-maxR, min(maxR, dx))
+        if abs(dx) < 10 { dx = 0 }
         stickKnob.position = CGPoint(x: stickBase.position.x + dx, y: stickBase.position.y)
         moveX = dx / maxR
     }

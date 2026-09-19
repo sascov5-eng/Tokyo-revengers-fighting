@@ -25,8 +25,12 @@ final class GameViewController: UIViewController {
             let scene = MenuScene(size: skView.bounds.size)
             scene.scaleMode = .resizeFill
             skView.presentScene(scene)
-        } else if skView.scene!.size != skView.bounds.size {
-            skView.scene!.size = skView.bounds.size
+            return
+        }
+        let next = skView.bounds.size
+        let cur = skView.scene!.size
+        if abs(cur.width - next.width) > 1 || abs(cur.height - next.height) > 1 {
+            skView.scene!.size = next
         }
     }
 }
