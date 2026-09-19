@@ -110,7 +110,7 @@ final class GameScene: SKScene {
         refreshHUD()
         if player.isDown || enemy.isDown {
             roundOver = true
-            banner.text = player.isDown ? "MIKEY WINS  \u00b7  tap" : "TAKEMICHI WINS  \u00b7  tap"
+            banner.text = player.isDown ? "MIKEY WINS - tap" : "TAKEMICHI WINS - tap"
         }
     }
 

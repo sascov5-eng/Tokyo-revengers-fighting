@@ -42,7 +42,7 @@ final class TouchControls: SKNode {
         stickKnob.fillColor = SKColor.white.withAlphaComponent(0.38)
         stickKnob.strokeColor = .clear
         stickKnob.position = stickBase.position
-        jumpBtn = circle(28, fill: SKColor.white.withAlphaComponent(0.16), text: "\u2191")
+        jumpBtn = circle(28, fill: SKColor.white.withAlphaComponent(0.16), text: "UP")
         blockBtn = circle(28, fill: SKColor.white.withAlphaComponent(0.16), text: "B")
         punchBtn = circle(32, fill: SKColor(red: 0.75, green: 0.22, blue: 0.22, alpha: 0.7), text: "P")
         kickBtn = circle(32, fill: SKColor(red: 0.20, green: 0.40, blue: 0.80, alpha: 0.7), text: "K")
