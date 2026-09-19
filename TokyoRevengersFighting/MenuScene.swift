@@ -23,7 +23,7 @@ final class MenuScene: SKScene {
         sky.zPosition = -10
         addChild(sky)
 
-        let ground = SKSpriteNode(color: SKColor(red: 0.16, green: 0.14, blue: 0.12, alpha: 1), size: CGSize(width: size.width, height: 140))
+        let ground = SKSpriteNode(color: SKColor(red: 0.16, green: 0.14, blue: 0.12, alpha: 1), size: CGSize(width: size.width, height: 120))
         ground.anchorPoint = CGPoint(x: 0, y: 0)
         ground.zPosition = -8
         addChild(ground)
@@ -31,12 +31,12 @@ final class MenuScene: SKScene {
         let top = size.height - (view?.safeAreaInsets.top ?? 50) - 24
         addLabel("ТОКИЙСКИЕ МСТИТЕЛИ", font: 22, y: top, color: .white)
         addLabel("ФАЙТИНГ", font: 14, y: top - 28, color: SKColor.white.withAlphaComponent(0.55))
-        addLabel("Кем играть", font: 16, y: top - 80, color: .white)
-        addLabel("Второй всегда CPU", font: 12, y: top - 102, color: SKColor.white.withAlphaComponent(0.45))
+        addLabel("Кем играть", font: 16, y: top - 72, color: .white)
+        addLabel("Второй всегда CPU", font: 12, y: top - 94, color: SKColor.white.withAlphaComponent(0.45))
 
-        layoutCard(Roster.takemichi, y: size.height * 0.50)
+        layoutCard(Roster.takemichi, y: size.height * 0.52)
         layoutCard(Roster.mikey, y: size.height * 0.30)
-        addLabel("фаза 1 - заглушки", font: 11, y: 24 + (view?.safeAreaInsets.bottom ?? 8), color: SKColor.white.withAlphaComponent(0.28))
+        addLabel("фаза 2 - цифры и спецы", font: 11, y: 22 + (view?.safeAreaInsets.bottom ?? 8), color: SKColor.white.withAlphaComponent(0.28))
     }
 
     private func addLabel(_ text: String, font: CGFloat, y: CGFloat, color: SKColor) {
@@ -50,9 +50,9 @@ final class MenuScene: SKScene {
     }
 
     private func layoutCard(_ profile: FighterProfile, y: CGFloat) {
-        let w = size.width - 56
-        let h: CGFloat = 118
-        let rect = CGRect(x: 28, y: y - h / 2, width: w, height: h)
+        let w = size.width - 48
+        let h: CGFloat = 136
+        let rect = CGRect(x: 24, y: y - h / 2, width: w, height: h)
         cards[profile.id] = rect
 
         let bg = SKShapeNode(rect: rect, cornerRadius: 14)
@@ -62,11 +62,11 @@ final class MenuScene: SKScene {
         bg.zPosition = 5
         addChild(bg)
 
-        let swatch = SKShapeNode(rectOf: CGSize(width: 36, height: 64), cornerRadius: 8)
+        let swatch = SKShapeNode(rectOf: CGSize(width: 36, height: 72), cornerRadius: 8)
         swatch.fillColor = profile.bodyColor
         swatch.strokeColor = profile.accentColor
         swatch.lineWidth = 2
-        swatch.position = CGPoint(x: rect.minX + 40, y: rect.midY)
+        swatch.position = CGPoint(x: rect.minX + 40, y: rect.midY + 6)
         swatch.zPosition = 6
         addChild(swatch)
 
@@ -75,18 +75,36 @@ final class MenuScene: SKScene {
         name.fontSize = 22
         name.fontColor = .white
         name.horizontalAlignmentMode = .left
-        name.position = CGPoint(x: rect.minX + 72, y: rect.midY + 10)
+        name.position = CGPoint(x: rect.minX + 72, y: rect.midY + 28)
         name.zPosition = 6
         addChild(name)
 
         let role = SKLabelNode(fontNamed: "HelveticaNeue")
-        role.text = profile.role + "   HP \(Int(profile.maxHP))"
-        role.fontSize = 13
-        role.fontColor = SKColor.white.withAlphaComponent(0.6)
+        role.text = profile.role + "   HP \(Int(profile.maxHP))   SPD \(Int(profile.speed))"
+        role.fontSize = 12
+        role.fontColor = SKColor.white.withAlphaComponent(0.62)
         role.horizontalAlignmentMode = .left
-        role.position = CGPoint(x: rect.minX + 72, y: rect.midY - 16)
+        role.position = CGPoint(x: rect.minX + 72, y: rect.midY + 6)
         role.zPosition = 6
         addChild(role)
+
+        let hits = SKLabelNode(fontNamed: "HelveticaNeue")
+        hits.text = "P \(Int(profile.punchDamage))   K \(Int(profile.kickDamage))"
+        hits.fontSize = 12
+        hits.fontColor = SKColor.white.withAlphaComponent(0.55)
+        hits.horizontalAlignmentMode = .left
+        hits.position = CGPoint(x: rect.minX + 72, y: rect.midY - 16)
+        hits.zPosition = 6
+        addChild(hits)
+
+        let spec = SKLabelNode(fontNamed: "HelveticaNeue-Bold")
+        spec.text = "S  " + profile.specialName
+        spec.fontSize = 13
+        spec.fontColor = profile.accentColor
+        spec.horizontalAlignmentMode = .left
+        spec.position = CGPoint(x: rect.minX + 72, y: rect.midY - 38)
+        spec.zPosition = 6
+        addChild(spec)
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
