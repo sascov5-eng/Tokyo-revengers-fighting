@@ -16,6 +16,9 @@
 		A10000000000000000000007 /* TouchControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000007 /* TouchControls.swift */; };
 		A10000000000000000000008 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000008 /* Assets.xcassets */; };
 		A1000000000000000000000A /* MenuScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000A /* MenuScene.swift */; };
+		A1000000000000000000000B /* SpriteBank.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000B /* SpriteBank.swift */; };
+		A1000000000000000000000C /* SpriteDataA.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000C /* SpriteDataA.swift */; };
+		A1000000000000000000000D /* SpriteDataB.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000D /* SpriteDataB.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +33,9 @@
 		B10000000000000000000008 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B10000000000000000000009 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B1000000000000000000000A /* MenuScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuScene.swift; sourceTree = "<group>"; };
+		B1000000000000000000000B /* SpriteBank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpriteBank.swift; sourceTree = "<group>"; };
+		B1000000000000000000000C /* SpriteDataA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpriteDataA.swift; sourceTree = "<group>"; };
+		B1000000000000000000000D /* SpriteDataB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpriteDataB.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +68,9 @@
 				B10000000000000000000005 /* Fighter.swift */,
 				B10000000000000000000006 /* Roster.swift */,
 				B10000000000000000000007 /* TouchControls.swift */,
+				B1000000000000000000000B /* SpriteBank.swift */,
+				B1000000000000000000000C /* SpriteDataA.swift */,
+				B1000000000000000000000D /* SpriteDataB.swift */,
 				B10000000000000000000008 /* Assets.xcassets */,
 				B10000000000000000000009 /* Info.plist */,
 			);
@@ -153,6 +162,9 @@
 				A10000000000000000000005 /* Fighter.swift in Sources */,
 				A10000000000000000000006 /* Roster.swift in Sources */,
 				A10000000000000000000007 /* TouchControls.swift in Sources */,
+				A1000000000000000000000B /* SpriteBank.swift in Sources */,
+				A1000000000000000000000C /* SpriteDataA.swift in Sources */,
+				A1000000000000000000000D /* SpriteDataB.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
