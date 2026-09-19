@@ -10,7 +10,7 @@ final class Fighter: SKNode {
     private(set) var state: FighterState = .idle
     var facingRight = true
     var onGround = true
-    private(set) var specialReady: Bool { specialCooldown <= 0 }
+    var specialReady: Bool { specialCooldown <= 0 }
 
     private var velocity = CGVector.zero
     private var stateTime: TimeInterval = 0
