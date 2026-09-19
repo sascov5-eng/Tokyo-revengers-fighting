@@ -20,7 +20,7 @@ final class GameViewController: UIViewController {
         skView.showsNodeCount = true
         #endif
 
-        let scene = GameScene(size: CGSize(width: 390, height: 844))
+        let scene = MenuScene(size: CGSize(width: 390, height: 844))
         scene.scaleMode = .aspectFill
         skView.presentScene(scene)
     }
