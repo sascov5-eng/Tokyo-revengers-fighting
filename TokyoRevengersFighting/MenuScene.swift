@@ -1,40 +1,50 @@
 import SpriteKit
+import UIKit
 
 final class MenuScene: SKScene {
     private var cards: [String: CGRect] = [:]
 
     override func didMove(to view: SKView) {
-        backgroundColor = SKColor(red: 0.07, green: 0.08, blue: 0.12, alpha: 1)
+        rebuild()
+    }
+
+    override func didChangeSize(_ oldSize: CGSize) {
+        rebuild()
+    }
+
+    private func rebuild() {
         removeAllChildren()
         cards.removeAll()
+        backgroundColor = SKColor(red: 0.07, green: 0.08, blue: 0.12, alpha: 1)
+        isUserInteractionEnabled = true
 
         let sky = SKSpriteNode(color: SKColor(red: 0.10, green: 0.12, blue: 0.18, alpha: 1), size: size)
         sky.anchorPoint = .zero
         sky.zPosition = -10
         addChild(sky)
 
-        let ground = SKSpriteNode(color: SKColor(red: 0.16, green: 0.14, blue: 0.12, alpha: 1), size: CGSize(width: size.width, height: 160))
+        let ground = SKSpriteNode(color: SKColor(red: 0.16, green: 0.14, blue: 0.12, alpha: 1), size: CGSize(width: size.width, height: 140))
         ground.anchorPoint = CGPoint(x: 0, y: 0)
         ground.zPosition = -8
         addChild(ground)
 
-        addLabel("ТОКИЙСКИЕ МСТИТЕЛИ", size: 22, y: self.size.height - 86, color: .white)
-        addLabel("ФАЙТИНГ", size: 14, y: self.size.height - 112, color: SKColor.white.withAlphaComponent(0.55))
-        addLabel("Кем играть", size: 16, y: self.size.height - 168, color: .white)
-        addLabel("Второй всегда CPU", size: 12, y: self.size.height - 190, color: SKColor.white.withAlphaComponent(0.45))
+        let top = size.height - (view?.safeAreaInsets.top ?? 50) - 24
+        addLabel("ТОКИЙСКИЕ МСТИТЕЛИ", font: 22, y: top, color: .white)
+        addLabel("ФАЙТИНГ", font: 14, y: top - 28, color: SKColor.white.withAlphaComponent(0.55))
+        addLabel("Кем играть", font: 16, y: top - 80, color: .white)
+        addLabel("Второй всегда CPU", font: 12, y: top - 102, color: SKColor.white.withAlphaComponent(0.45))
 
-        layoutCard(Roster.takemichi, y: size.height * 0.52)
+        layoutCard(Roster.takemichi, y: size.height * 0.50)
         layoutCard(Roster.mikey, y: size.height * 0.30)
-
-        addLabel("фаза 1 - заглушки", size: 11, y: 48, color: SKColor.white.withAlphaComponent(0.28))
+        addLabel("фаза 1 - заглушки", font: 11, y: 24 + (view?.safeAreaInsets.bottom ?? 8), color: SKColor.white.withAlphaComponent(0.28))
     }
 
-    private func addLabel(_ text: String, size: CGFloat, y: CGFloat, color: SKColor) {
+    private func addLabel(_ text: String, font: CGFloat, y: CGFloat, color: SKColor) {
         let n = SKLabelNode(fontNamed: "HelveticaNeue-Bold")
         n.text = text
-        n.fontSize = size
+        n.fontSize = font
         n.fontColor = color
-        n.position = CGPoint(x: self.size.width / 2, y: y)
+        n.position = CGPoint(x: size.width / 2, y: y)
         n.zPosition = 10
         addChild(n)
     }
@@ -84,7 +94,7 @@ final class MenuScene: SKScene {
         if let id = cards.first(where: { $0.value.contains(p) })?.key {
             let profile = id == Roster.takemichi.id ? Roster.takemichi : Roster.mikey
             let fight = GameScene(size: size, playerProfile: profile)
-            fight.scaleMode = scaleMode
+            fight.scaleMode = .resizeFill
             view?.presentScene(fight, transition: .fade(withDuration: 0.2))
         }
     }
