@@ -1,5 +1,5 @@
 # /docs
 
-Геймдизайн и пайплайн.
-
-- [DECISIONS.md](DECISIONS.md) — то, что уже утверждено в разговоре.
+- [DECISIONS.md](DECISIONS.md) — что утверждено
+- [GDD.md](GDD.md) — геймдизайн v0.2
+- [PIPELINE.md](PIPELINE.md) — фазы работ
