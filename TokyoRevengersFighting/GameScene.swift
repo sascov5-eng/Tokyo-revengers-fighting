@@ -15,6 +15,7 @@ final class GameScene: SKScene {
     private var eBar: SKSpriteNode!
     private var overlay: SKNode?
     private var arenaNodes: [SKNode] = []
+    private var liveTouches = Set<ObjectIdentifier>()
     private var roundOver = false
     private var timeLeft: TimeInterval = 99
     private var lastUpdate: TimeInterval = 0
@@ -95,10 +96,6 @@ final class GameScene: SKScene {
         timerLabel.position = CGPoint(x: size.width / 2, y: top - 26)
         pBar.position = CGPoint(x: 16, y: top - 42)
         eBar.position = CGPoint(x: size.width - 16, y: top - 42)
-        if !roundOver {
-            player.reset(at: CGPoint(x: 90, y: groundY), faceRight: true)
-            enemy.reset(at: CGPoint(x: size.width - 90, y: groundY), faceRight: false)
-        }
     }
 
     private func rebuildArena() {
@@ -140,6 +137,8 @@ final class GameScene: SKScene {
         roundOver = false
         timeLeft = 99
         lastUpdate = 0
+        liveTouches.removeAll()
+        controls.keepOnly([])
         controls.isHidden = false
         player.reset(at: CGPoint(x: 90, y: groundY), faceRight: true)
         enemy.reset(at: CGPoint(x: size.width - 90, y: groundY), faceRight: false)
@@ -150,6 +149,7 @@ final class GameScene: SKScene {
         if lastUpdate == 0 { lastUpdate = currentTime }
         let dt = min(0.05, currentTime - lastUpdate)
         lastUpdate = currentTime
+        controls.keepOnly(liveTouches)
         guard !roundOver else { return }
         timeLeft = max(0, timeLeft - dt)
         player.intentMove = controls.moveX
@@ -197,6 +197,8 @@ final class GameScene: SKScene {
     private func finishRound() {
         guard !roundOver else { return }
         roundOver = true
+        liveTouches.removeAll()
+        controls.keepOnly([])
         controls.isHidden = true
         let title: String
         if player.isDown && enemy.isDown { title = "НИЧЬЯ" }
@@ -248,12 +250,17 @@ final class GameScene: SKScene {
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard !roundOver else { return }
-        for touch in touches { controls.touchBegan(touch, at: touch.location(in: self)) }
+        for touch in touches {
+            liveTouches.insert(ObjectIdentifier(touch))
+            controls.touchBegan(touch, at: touch.location(in: self))
+        }
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard !roundOver else { return }
-        for touch in touches { controls.touchMoved(touch, at: touch.location(in: self)) }
+        for touch in touches {
+            controls.touchMoved(touch, at: touch.location(in: self))
+        }
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -267,10 +274,18 @@ final class GameScene: SKScene {
             }
             return
         }
-        for touch in touches { controls.touchEnded(touch) }
+        for touch in touches {
+            liveTouches.remove(ObjectIdentifier(touch))
+            controls.touchEnded(touch)
+        }
+        controls.keepOnly(liveTouches)
     }
 
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for touch in touches { controls.touchEnded(touch) }
+        for touch in touches {
+            liveTouches.remove(ObjectIdentifier(touch))
+            controls.touchEnded(touch)
+        }
+        controls.keepOnly(liveTouches)
     }
 }
